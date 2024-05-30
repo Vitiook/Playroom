@@ -1,0 +1,10 @@
+require("./Bingo/index.test");
+require("./DataFeeds/index.test");
+require("./Token/index.test");
+require("./Lottery/index.test");
+require("./Bingo");
+require("./DataFeeds");
+require("./Lottery");
+require("./RoomCoin");
+require("./Token");
+require("./vesting");

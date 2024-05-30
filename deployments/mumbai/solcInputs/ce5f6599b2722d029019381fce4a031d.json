@@ -1,0 +1,39 @@
+{
+  "language": "Solidity",
+  "sources": {
+    "contracts/DataFeeds.sol": {
+      "content": "// SPDX-License-Identifier: MIT\npragma solidity ^0.8.24;\n\nimport './interfaces/IDataFeeds.sol';\n\nerror WrongMaxNumber();\n\ncontract DataFeeds is IDataFeeds {\n  bytes32 public constant CONTRACT_ROLE = keccak256(\"CONTRACT_ROLE\");\n\n  function getRandomLotto_6_49(bytes32 salt_) external view returns(bytes6) {\n    bytes32 random = bytes32(block.prevrandao);\n\n    uint8[] memory orderedArray = getOrderedArray(1, 49);\n    uint8[6] memory resultNumbers;\n\n    for (uint8 i = 0; i < 6; i += 1) {\n      uint randomNumber = uint256(keccak256(abi.encodePacked(\n        salt_, random[i], random[i + 1], random[i + 2], random[i + 3], random[i + 4]\n      )));\n      uint index = _getRoundNumber(randomNumber, 48 - i);\n      resultNumbers[i] = orderedArray[index];\n      orderedArray[index] = orderedArray[orderedArray.length - 1 - i];\n    }\n    return bytes6(abi.encodePacked(resultNumbers[0], resultNumbers[1], resultNumbers[2], resultNumbers[3], resultNumbers[4], resultNumbers[5]));\n  }\n\n  function getRandomBingoNumbers(bytes32 salt_, uint8 maxNumber_) external view returns(bytes memory) {\n    if (maxNumber_ > 96) revert WrongMaxNumber();\n\n    bytes memory random = abi.encodePacked(block.prevrandao, block.number, block.timestamp);\n\n    uint8[] memory orderedArray = getOrderedArray(1, maxNumber_);\n\n    bytes memory result = new bytes(maxNumber_);\n\n    for (uint8 i = 0; i < maxNumber_ - 1; i += 1) {\n      uint randomNumber = uint256(keccak256(abi.encodePacked(random[i], salt_)));\n      uint index = _getRoundNumber(randomNumber, maxNumber_ - i - 1);\n      result[i] = bytes1(orderedArray[index]);\n      orderedArray[index] = orderedArray[maxNumber_ - 1 - i];\n    }\n\n    result[maxNumber_ - 1] = bytes1(orderedArray[0]);\n\n    return result;\n  }\n\n  function getOrderedArray(uint8 from_, uint8 to_) public pure returns(uint8[] memory) {\n    if (from_ > to_) revert('DataFeeds: Wrong borders');\n\n    uint8[] memory result = new uint8[](to_ - from_ + 1);\n\n    for (uint8 i = 0; i <= to_ - from_; i += 1) {\n      result[i] = from_ + i;\n    }\n\n    return result;\n  }\n\n  function getNumbersFromBytes(bytes memory bytes_) public pure returns(uint8[] memory) {\n    uint8[] memory result = new uint8[](bytes_.length);\n    for (uint i = 0; i < bytes_.length; i += 1) {\n      result[i] = uint8(bytes_[i]);\n    }\n\n    return result;\n  }\n\n  // Need big value number >>> maxValue\n  function _getRoundNumber(uint number_, uint8 maxNumber_) private pure returns(uint8) {\n    if (maxNumber_ == 0) revert WrongMaxNumber();\n\n    return uint8(number_ % (maxNumber_ + 1));\n  }\n}\n"
+    },
+    "contracts/interfaces/IDataFeeds.sol": {
+      "content": "// SPDX-License-Identifier: MIT\npragma solidity ^0.8.24;\n\ninterface IDataFeeds {\n  function getRandomLotto_6_49(bytes32 salt_) external returns(bytes6);\n\n  function getRandomBingoNumbers(bytes32 salt_, uint8 maxNumber_) external returns(bytes memory);\n\n  function getOrderedArray(uint8 from_, uint8 to_) external returns(uint8[] memory);\n\n  function getNumbersFromBytes(bytes memory bytes_) external returns(uint8[] memory);\n}"
+    }
+  },
+  "settings": {
+    "optimizer": {
+      "enabled": true,
+      "runs": 2000
+    },
+    "evmVersion": "paris",
+    "outputSelection": {
+      "*": {
+        "*": [
+          "abi",
+          "evm.bytecode",
+          "evm.deployedBytecode",
+          "evm.methodIdentifiers",
+          "metadata",
+          "storageLayout",
+          "devdoc",
+          "userdoc",
+          "evm.gasEstimates"
+        ],
+        "": [
+          "ast"
+        ]
+      }
+    },
+    "metadata": {
+      "useLiteralContent": true
+    }
+  }
+}

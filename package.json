@@ -1,0 +1,42 @@
+{
+  "name": "zaur",
+  "devDependencies": {
+    "@nomicfoundation/hardhat-toolbox": "^4.0.0",
+    "@nomicfoundation/hardhat-verify": "^2.0.5",
+    "@openzeppelin/hardhat-upgrades": "^3.0.5",
+    "@typescript-eslint/eslint-plugin": "^7.6.0",
+    "eslint": "^8.30.0",
+    "eslint-config-prettier": "^8.5.0",
+    "eslint-config-standard": "^17.0.0",
+    "eslint-plugin-import": "^2.26.0",
+    "eslint-plugin-n": "^15.6.0",
+    "eslint-plugin-node": "^11.1.0",
+    "eslint-plugin-prettier": "^4.2.1",
+    "eslint-plugin-promise": "^6.1.1",
+    "hardhat": "^2.22.2",
+    "hardhat-deploy": "^0.12.2",
+    "hardhat-gas-reporter": "^1.0.10",
+    "prettier": "^2.8.1",
+    "prettier-plugin-solidity": "^1.1.0",
+    "solhint": "^3.3.7",
+    "solhint-plugin-prettier": "^0.0.5",
+    "typescript": "^5.4.3"
+  },
+  "dependencies": {
+    "@openzeppelin/contracts": "^5.0.2",
+    "@openzeppelin/contracts-upgradeable": "^5.0.2",
+    "dotenv": "^16.4.5"
+  },
+  "scripts": {
+    "test": "hardhat test ./test/index.test.ts",
+    "compile": "npx hardhat compile",
+    "coverage": "npx hardhat coverage",
+    "local-node": "npx hardhat node --hostname 0.0.0.0",
+    "lint": "yarn lint:ts && yarn lint:sol",
+    "lint:fix": "yarn lint:ts:fix && yarn lint:sol:fix",
+    "lint:ts": "eslint --ext .ts .",
+    "lint:ts:fix": "eslint --ext .ts . --fix",
+    "lint:sol": "solhint -f table '{contracts,test}/**/*.sol' && prettier --check './contracts/**/*.sol'",
+    "lint:sol:fix": "prettier --write './contracts/**/*.sol'"
+  }
+}
